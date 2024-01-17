@@ -2,6 +2,7 @@ package com.example.oauth2.controller;
 
 import com.example.oauth2.entity.AuthRequest;
 import com.example.oauth2.entity.UserInfo;
+import com.example.oauth2.publisher.RabbitMQProducer;
 import com.example.oauth2.service.JwtService;
 import com.example.oauth2.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,14 @@ public class UserController {
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
+    private final RabbitMQProducer producer;
 
     @Autowired
-    public UserController(UserInfoService service, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserController(UserInfoService service, JwtService jwtService, AuthenticationManager authenticationManager, RabbitMQProducer producer) {
         this.service = service;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.producer = producer;
     }
 
     @GetMapping("/welcome")
@@ -35,6 +38,7 @@ public class UserController {
 
     @PostMapping("/addNewUser")
     public String addNewUser(@RequestBody UserInfo userInfo) {
+        producer.sendMessage(userInfo);
         return service.addUser(userInfo);
     }
 
