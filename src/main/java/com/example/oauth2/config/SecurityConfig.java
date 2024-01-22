@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/","/auth/welcome", "/auth/addNewUser",
-                            "/auth/generateToken").permitAll();
+                            "/auth/generateToken","/product/*","/product").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login(withDefaults())
